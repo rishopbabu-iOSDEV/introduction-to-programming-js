@@ -35,6 +35,10 @@ javascript-quest/
 ├── weekly-schedule/
 │   └── WEEKLY_SCHEDULE.md      ← Full 5-day timetable (for instructors)
 │
+├── tutor-handbook/
+│   └── TUTOR_HANDBOOK.md       ← How to drive the class, topic by topic
+│                                 (written for a tutor new to JS)
+│
 ├── student-handout/
 │   └── STUDENT_HANDOUT.md      ← Print-friendly student reference guide
 │
@@ -84,6 +88,10 @@ Full details are in [`weekly-schedule/WEEKLY_SCHEDULE.md`](weekly-schedule/WEEKL
   `solutions/block-7-projects/` for ideas.
 
 ### For Instructors
+- Start with [`tutor-handbook/TUTOR_HANDBOOK.md`](tutor-handbook/TUTOR_HANDBOOK.md) —
+  a topic-by-topic guide on how to drive each class engagingly, with real-world
+  examples and a student-doubts bank. Written for a tutor who knows programming
+  but is new to JavaScript.
 - `solutions/` files are **answer keys** — reveal them only after students attempt a task.
 - Each solution is commented *as if talking to a beginner*, and ends with a
   `✅ What to try next:` section for fast finishers.
