@@ -1,0 +1,66 @@
+/* ============================================================
+   TASK 6.1 — Dark Mode Toggle
+   CONCEPT: CSS variables + class switching with JS
+   ============================================================ */
+
+/* --- Light mode (default) --- */
+body {
+  --bg-color: #f5f5f5;
+  --text-color: #222;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0,0,0,0.1);
+  --btn-bg: #222;
+  --btn-text: #fff;
+
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- Dark mode — applied when JS adds this class to <body> --- */
+body.dark-mode {
+  --bg-color: #1a1a2e;
+  --text-color: #e0e0e0;
+  --card-bg: #16213e;
+  --card-shadow: rgba(0,0,0,0.4);
+  --btn-bg: #e94560;
+  --btn-text: #fff;
+}
+
+.container {
+  max-width: 640px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+h1 { font-size: 2rem; margin-bottom: 8px; }
+
+p { line-height: 1.7; color: var(--text-color); }
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 28px 0;
+  box-shadow: 0 4px 16px var(--card-shadow);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card h2 { margin-top: 0; }
+
+button {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover  { opacity: 0.85; }
+button:active { transform: scale(0.97); }

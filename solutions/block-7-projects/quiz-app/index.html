@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎯 Quiz App — JavaScript Quest</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+
+      <!-- START SCREEN -->
+      <div id="startScreen" class="screen active">
+        <div class="emoji">🎯</div>
+        <h1>JavaScript Quiz</h1>
+        <p>Test your JavaScript knowledge with 10 questions.</p>
+        <p class="sub">Read carefully — some are tricky! Good luck! 🍀</p>
+        <button id="startBtn" class="btn btn-primary">Start Quiz ▶</button>
+      </div>
+
+      <!-- QUIZ SCREEN -->
+      <div id="quizScreen" class="screen">
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="question-num" id="questionNum">Question 1 of 10</p>
+        <h2 class="question-text" id="questionText">Question goes here</h2>
+        <div class="options" id="optionsContainer"></div>
+        <p class="feedback" id="feedback"></p>
+        <button id="nextBtn" class="btn btn-primary" style="display:none">Next →</button>
+      </div>
+
+      <!-- RESULT SCREEN -->
+      <div id="resultScreen" class="screen">
+        <div class="emoji" id="resultEmoji">🏆</div>
+        <h2 id="resultTitle">Well done!</h2>
+        <p class="score-display" id="scoreDisplay">8 / 10</p>
+        <p id="resultMsg">Great result!</p>
+        <button id="retryBtn" class="btn btn-primary">Play Again 🔄</button>
+      </div>
+
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

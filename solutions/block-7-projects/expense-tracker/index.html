@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 Expense Tracker — JavaScript Quest</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f5f7fa;
+        padding: 32px 16px;
+      }
+      h1 { text-align: center; color: #1a1a2e; margin-bottom: 4px; }
+      .tagline { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 28px; }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      /* Card shared style */
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      }
+      .card h2 { font-size: 1rem; color: #555; margin-bottom: 16px; font-weight: 600; }
+
+      /* Form */
+      .form-group { margin-bottom: 14px; }
+      label { display: block; font-size: 0.82rem; color: #777; margin-bottom: 5px; }
+      input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 9px;
+        font-size: 0.95rem;
+        outline: none;
+        font-family: inherit;
+        transition: border-color 0.2s;
+      }
+      input:focus, select:focus { border-color: #4a90d9; }
+      .add-btn {
+        width: 100%;
+        background: #e94560;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 9px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: opacity 0.2s;
+      }
+      .add-btn:hover { opacity: 0.88; }
+
+      /* Summary cards */
+      .summary-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .summary-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      .summary-card .amount { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; }
+      .summary-card .label  { font-size: 0.78rem; color: #aaa; margin-top: 4px; }
+
+      /* Filter bar */
+      .filter-bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .filter-btn {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1.5px solid #e0e0e0;
+        background: #fff;
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .filter-btn.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+
+      /* Expense Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th {
+        text-align: left;
+        padding: 10px 12px;
+        color: #aaa;
+        font-weight: 600;
+        font-size: 0.78rem;
+        border-bottom: 1px solid #f0f0f0;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      td {
+        padding: 12px 12px;
+        border-bottom: 1px solid #f7f7f7;
+        color: #333;
+      }
+      tr:last-child td { border-bottom: none; }
+      tr:hover td { background: #fafafa; }
+
+      .category-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+      .amount-cell { font-weight: 600; color: #e94560; }
+      .delete-row-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #ccc;
+        transition: color 0.15s;
+      }
+      .delete-row-btn:hover { color: #e74c3c; }
+
+      .empty-table { text-align: center; color: #bbb; padding: 28px; }
+
+      /* Category colours */
+      .cat-food        { background: #fff3e0; color: #e65100; }
+      .cat-transport   { background: #e8f5e9; color: #2e7d32; }
+      .cat-entertainment { background: #ede7f6; color: #4527a0; }
+      .cat-shopping    { background: #e3f2fd; color: #1565c0; }
+      .cat-health      { background: #fce4ec; color: #880e4f; }
+      .cat-other       { background: #f5f5f5; color: #555; }
+
+      /* Category breakdown */
+      .breakdown { margin-top: 18px; }
+      .breakdown h3 { font-size: 0.85rem; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+      .breakdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .breakdown-label { flex: 1; font-size: 0.88rem; color: #555; }
+      .breakdown-bar-track { flex: 2; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+      .breakdown-bar-fill  { height: 100%; border-radius: 4px; }
+      .breakdown-amount { font-size: 0.85rem; font-weight: 600; color: #1a1a2e; min-width: 60px; text-align: right; }
+
+      @media (max-width: 720px) {
+        .layout { grid-template-columns: 1fr; }
+        .summary-row { grid-template-columns: repeat(3, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📊 Expense Tracker</h1>
+    <p class="tagline">Track where your money goes — one entry at a time.</p>
+
+    <div class="layout">
+      <!-- LEFT: Add Expense Form -->
+      <div>
+        <div class="card">
+          <h2>➕ Add Expense</h2>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="descInput" placeholder="e.g. Lunch at canteen" />
+          </div>
+          <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" id="amountInput" placeholder="0" min="1" />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="categorySelect">
+              <option value="food">🍔 Food</option>
+              <option value="transport">🚌 Transport</option>
+              <option value="entertainment">🎬 Entertainment</option>
+              <option value="shopping">🛍️ Shopping</option>
+              <option value="health">💊 Health</option>
+              <option value="other">📦 Other</option>
+            </select>
+          </div>
+          <button class="add-btn" id="addExpenseBtn">Add Expense ➕</button>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="card" style="margin-top:20px">
+          <h2>📈 By Category</h2>
+          <div class="breakdown" id="breakdownContainer">
+            <p style="color:#bbb;font-size:0.88rem">No expenses yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Summary + Table -->
+      <div>
+        <!-- Summary -->
+        <div class="summary-row">
+          <div class="summary-card">
+            <div class="amount" id="totalAmount">₹0</div>
+            <div class="label">Total Spent</div>
+          </div>
+          <div class="summary-card">
+            <div class="amount" id="totalCount">0</div>
+            <div class="label">Transactions</div>
+          </div>
+          <div class="summary-card">
+            <div class="amount" id="avgAmount">₹0</div>
+            <div class="label">Average</div>
+          </div>
+        </div>
+
+        <!-- Filter + Table -->
+        <div class="card">
+          <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-cat="all">All</button>
+            <button class="filter-btn" data-cat="food">🍔 Food</button>
+            <button class="filter-btn" data-cat="transport">🚌 Transport</button>
+            <button class="filter-btn" data-cat="entertainment">🎬 Entertainment</button>
+            <button class="filter-btn" data-cat="shopping">🛍️ Shopping</button>
+            <button class="filter-btn" data-cat="health">💊 Health</button>
+            <button class="filter-btn" data-cat="other">📦 Other</button>
+          </div>
+
+          <table id="expenseTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="expenseTableBody">
+              <tr><td colspan="5" class="empty-table">No expenses yet. Add one on the left! 👈</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================================
+      // PROJECT D — Expense Tracker
+      // Block 7: The Final Boss
+      // ============================================================
+
+      // State
+      let expenses = JSON.parse(localStorage.getItem("expenses") || "[]");
+      let activeFilter = "all";
+
+      const CATEGORY_META = {
+        food:          { label: "🍔 Food",          color: "#e65100", barColor: "#ff9800" },
+        transport:     { label: "🚌 Transport",      color: "#2e7d32", barColor: "#4caf50" },
+        entertainment: { label: "🎬 Entertainment",  color: "#4527a0", barColor: "#9c27b0" },
+        shopping:      { label: "🛍️ Shopping",       color: "#1565c0", barColor: "#2196f3" },
+        health:        { label: "💊 Health",          color: "#880e4f", barColor: "#e91e63" },
+        other:         { label: "📦 Other",           color: "#555",    barColor: "#9e9e9e" },
+      };
+
+      // DOM refs
+      const descInput        = document.getElementById("descInput");
+      const amountInput      = document.getElementById("amountInput");
+      const categorySelect   = document.getElementById("categorySelect");
+      const addExpenseBtn    = document.getElementById("addExpenseBtn");
+      const tableBody        = document.getElementById("expenseTableBody");
+      const totalAmountEl    = document.getElementById("totalAmount");
+      const totalCountEl     = document.getElementById("totalCount");
+      const avgAmountEl      = document.getElementById("avgAmount");
+      const breakdownEl      = document.getElementById("breakdownContainer");
+      const filterBar        = document.getElementById("filterBar");
+
+      // Add expense
+      addExpenseBtn.addEventListener("click", () => {
+        const desc     = descInput.value.trim();
+        const amount   = parseFloat(amountInput.value);
+        const category = categorySelect.value;
+
+        if (!desc || isNaN(amount) || amount <= 0) {
+          descInput.style.borderColor   = !desc ? "#e74c3c" : "";
+          amountInput.style.borderColor = (!amount || amount <= 0) ? "#e74c3c" : "";
+          setTimeout(() => {
+            descInput.style.borderColor = "";
+            amountInput.style.borderColor = "";
+          }, 800);
+          return;
+        }
+
+        const now = new Date();
+        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+
+        expenses.push({
+          id: Date.now(),
+          description: desc,
+          amount,
+          category,
+          date: dateStr
+        });
+
+        localStorage.setItem("expenses", JSON.stringify(expenses));
+
+        descInput.value = "";
+        amountInput.value = "";
+        render();
+      });
+
+      // Filter buttons
+      filterBar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".filter-btn");
+        if (!btn) return;
+        filterBar.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.cat;
+        render();
+      });
+
+      // Delete an expense
+      const deleteExpense = (id) => {
+        expenses = expenses.filter(e => e.id !== id);
+        localStorage.setItem("expenses", JSON.stringify(expenses));
+        render();
+      };
+
+      // Main render
+      const render = () => {
+        const filtered = activeFilter === "all"
+          ? expenses
+          : expenses.filter(e => e.category === activeFilter);
+
+        // Table
+        if (filtered.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="empty-table">${
+            activeFilter === "all"
+              ? "No expenses yet. Add one on the left! 👈"
+              : `No expenses in "${CATEGORY_META[activeFilter]?.label}" yet.`
+          }</td></tr>`;
+        } else {
+          // Show newest first
+          tableBody.innerHTML = [...filtered].reverse().map(exp => `
+            <tr>
+              <td style="color:#aaa;font-size:0.82rem">${exp.date}</td>
+              <td>${exp.description}</td>
+              <td><span class="category-tag cat-${exp.category}">${CATEGORY_META[exp.category].label}</span></td>
+              <td class="amount-cell">₹${exp.amount.toFixed(2)}</td>
+              <td><button class="delete-row-btn" data-id="${exp.id}">🗑️</button></td>
+            </tr>
+          `).join("");
+
+          tableBody.querySelectorAll(".delete-row-btn").forEach(btn => {
+            btn.addEventListener("click", () => deleteExpense(Number(btn.dataset.id)));
+          });
+        }
+
+        // Summary (always uses ALL expenses)
+        const total = expenses.reduce((s, e) => s + e.amount, 0);
+        const avg   = expenses.length ? total / expenses.length : 0;
+        totalAmountEl.textContent = `₹${total.toFixed(0)}`;
+        totalCountEl.textContent  = expenses.length;
+        avgAmountEl.textContent   = `₹${avg.toFixed(0)}`;
+
+        // Category breakdown
+        renderBreakdown(total);
+      };
+
+      const renderBreakdown = (total) => {
+        if (expenses.length === 0) {
+          breakdownEl.innerHTML = `<p style="color:#bbb;font-size:0.88rem">No expenses yet.</p>`;
+          return;
+        }
+
+        const byCategory = {};
+        expenses.forEach(e => {
+          byCategory[e.category] = (byCategory[e.category] || 0) + e.amount;
+        });
+
+        const sorted = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+
+        breakdownEl.innerHTML = sorted.map(([cat, amount]) => {
+          const pct = total > 0 ? (amount / total) * 100 : 0;
+          const meta = CATEGORY_META[cat];
+          return `
+            <div class="breakdown-item">
+              <span class="breakdown-label">${meta.label}</span>
+              <div class="breakdown-bar-track">
+                <div class="breakdown-bar-fill" style="width:${pct}%;background:${meta.barColor}"></div>
+              </div>
+              <span class="breakdown-amount">₹${amount.toFixed(0)}</span>
+            </div>
+          `;
+        }).join("");
+      };
+
+      // Initialise
+      render();
+    </script>
+  </body>
+</html>

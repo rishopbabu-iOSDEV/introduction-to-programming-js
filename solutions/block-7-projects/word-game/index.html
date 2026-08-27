@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎮 Word Guess Game — JavaScript Quest</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+      .game-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 520px;
+        width: 100%;
+        color: #fff;
+        text-align: center;
+      }
+      h1 { font-size: 1.8rem; margin-bottom: 6px; }
+      .subtitle { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 28px; }
+
+      /* Lives */
+      .lives { font-size: 1.8rem; letter-spacing: 4px; margin-bottom: 24px; }
+
+      /* Hint */
+      .hint-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+      .hint-text   { font-size: 0.85rem; color: #f1c40f; margin-bottom: 20px; font-style: italic; }
+
+      /* Word display */
+      .word-display {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+      }
+      .letter-box {
+        width: 44px; height: 54px;
+        border-bottom: 3px solid rgba(255,255,255,0.5);
+        display: flex; align-items: flex-end; justify-content: center;
+        font-size: 1.8rem; font-weight: 700;
+        color: #fff;
+        transition: transform 0.3s;
+      }
+      .letter-box.revealed { border-color: #4ade80; transform: scale(1.1); }
+
+      /* Keyboard */
+      .keyboard {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .key-btn {
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        min-width: 42px;
+      }
+      .key-btn:hover:not(:disabled) { background: rgba(255,255,255,0.28); }
+      .key-btn:active:not(:disabled){ transform: scale(0.93); }
+      .key-btn:disabled { cursor: default; opacity: 0.4; }
+      .key-btn.correct  { background: #16a34a !important; border-color: #4ade80; opacity: 1; }
+      .key-btn.wrong    { background: #991b1b !important; border-color: #f87171; opacity: 1; }
+
+      /* Wrong guesses */
+      .wrong-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+      .wrong-letters { color: #f87171; font-size: 0.95rem; min-height: 22px; margin-bottom: 20px; }
+
+      /* Message overlay */
+      .message {
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .message.win  { background: rgba(22,163,74,0.3); border: 1px solid #4ade80; color: #4ade80; }
+      .message.lose { background: rgba(153,27,27,0.3); border: 1px solid #f87171; color: #f87171; }
+
+      /* Button */
+      .new-game-btn {
+        background: linear-gradient(135deg, #e94560, #c0392b);
+        color: #fff;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        display: none;
+      }
+      .new-game-btn:hover { opacity: 0.88; }
+    </style>
+  </head>
+  <body>
+    <div class="game-card">
+      <h1>🔤 Word Guesser</h1>
+      <p class="subtitle">Guess the hidden JavaScript term!</p>
+
+      <div class="lives" id="livesDisplay">❤️❤️❤️❤️❤️❤️</div>
+
+      <p class="hint-label">HINT:</p>
+      <p class="hint-text" id="hintText">...</p>
+
+      <div class="word-display" id="wordDisplay"></div>
+
+      <p class="wrong-label">WRONG GUESSES:</p>
+      <p class="wrong-letters" id="wrongLetters">—</p>
+
+      <div class="keyboard" id="keyboard"></div>
+
+      <div class="message" id="message"></div>
+      <button class="new-game-btn" id="newGameBtn">New Game 🔄</button>
+    </div>
+
+    <script>
+      // ============================================================
+      // WORD GAME — JavaScript Terms Edition
+      // ============================================================
+
+      const WORDS = [
+        { word: "variable",  hint: "A named container that stores a value" },
+        { word: "function",  hint: "A reusable block of code you can call by name" },
+        { word: "boolean",   hint: "A data type that is either true or false" },
+        { word: "array",     hint: "An ordered list of values" },
+        { word: "object",    hint: "A collection of key-value pairs" },
+        { word: "string",    hint: "Text data wrapped in quotes" },
+        { word: "console",   hint: "Used with .log() to print to the browser" },
+        { word: "loop",      hint: "Used to repeat code multiple times" },
+        { word: "callback",  hint: "A function passed as an argument to another function" },
+        { word: "return",    hint: "Sends a value back from a function" },
+        { word: "constant",  hint: "A variable declared with 'const'" },
+        { word: "prompt",    hint: "Shows a popup that asks the user for input" },
+        { word: "event",     hint: "Something the user does, like a click or keypress" },
+        { word: "filter",    hint: "An array method that keeps only matching items" },
+        { word: "operator",  hint: "Symbol that performs an action, like + or ===" },
+        { word: "method",    hint: "A function that belongs to an object or data type" },
+        { word: "number",    hint: "A numeric data type in JavaScript" },
+        { word: "typeof",    hint: "Operator that returns the type of a value" },
+        { word: "scope",     hint: "Where in the code a variable is accessible" },
+        { word: "template",  hint: "Literal using backticks for string interpolation" },
+      ];
+
+      const MAX_LIVES = 6;
+
+      let selectedWord = "";
+      let selectedHint = "";
+      let guessedLetters = [];
+      let wrongGuesses   = [];
+      let livesLeft = MAX_LIVES;
+      let gameOver = false;
+
+      // DOM refs
+      const livesDisplay  = document.getElementById("livesDisplay");
+      const hintText      = document.getElementById("hintText");
+      const wordDisplay   = document.getElementById("wordDisplay");
+      const wrongLettersEl = document.getElementById("wrongLetters");
+      const keyboardEl    = document.getElementById("keyboard");
+      const messageEl     = document.getElementById("message");
+      const newGameBtn    = document.getElementById("newGameBtn");
+
+      // Initialise the keyboard (A–Z)
+      const buildKeyboard = () => {
+        keyboardEl.innerHTML = "";
+        "abcdefghijklmnopqrstuvwxyz".split("").forEach(letter => {
+          const btn = document.createElement("button");
+          btn.classList.add("key-btn");
+          btn.textContent = letter.toUpperCase();
+          btn.dataset.letter = letter;
+          btn.addEventListener("click", () => handleGuess(letter));
+          keyboardEl.appendChild(btn);
+        });
+      };
+
+      // Start a new game
+      const startGame = () => {
+        const picked = WORDS[Math.floor(Math.random() * WORDS.length)];
+        selectedWord = picked.word;
+        selectedHint = picked.hint;
+        guessedLetters = [];
+        wrongGuesses   = [];
+        livesLeft = MAX_LIVES;
+        gameOver = false;
+
+        messageEl.style.display = "none";
+        messageEl.className = "message";
+        newGameBtn.style.display = "none";
+
+        hintText.textContent = selectedHint;
+        buildKeyboard();
+        render();
+      };
+
+      // Render word boxes, lives, wrong letters
+      const render = () => {
+        // Word display
+        wordDisplay.innerHTML = "";
+        selectedWord.split("").forEach(letter => {
+          const box = document.createElement("div");
+          box.classList.add("letter-box");
+          if (guessedLetters.includes(letter)) {
+            box.textContent = letter.toUpperCase();
+            box.classList.add("revealed");
+          }
+          wordDisplay.appendChild(box);
+        });
+
+        // Lives
+        const hearts = "❤️".repeat(livesLeft) + "🖤".repeat(MAX_LIVES - livesLeft);
+        livesDisplay.textContent = hearts;
+
+        // Wrong guesses
+        wrongLettersEl.textContent = wrongGuesses.length
+          ? wrongGuesses.map(l => l.toUpperCase()).join("  ")
+          : "—";
+      };
+
+      // Handle a letter guess
+      const handleGuess = (letter) => {
+        if (gameOver || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) return;
+
+        const btn = keyboardEl.querySelector(`[data-letter="${letter}"]`);
+
+        if (selectedWord.includes(letter)) {
+          guessedLetters.push(letter);
+          if (btn) { btn.classList.add("correct"); btn.disabled = true; }
+
+          // Check WIN
+          const won = selectedWord.split("").every(l => guessedLetters.includes(l));
+          if (won) {
+            endGame(true);
+            return;
+          }
+        } else {
+          wrongGuesses.push(letter);
+          livesLeft--;
+          if (btn) { btn.classList.add("wrong"); btn.disabled = true; }
+
+          // Check LOSE
+          if (livesLeft <= 0) {
+            endGame(false);
+            return;
+          }
+        }
+
+        render();
+      };
+
+      // End the game
+      const endGame = (won) => {
+        gameOver = true;
+        render();
+
+        // Reveal the full word if lost
+        if (!won) {
+          wordDisplay.querySelectorAll(".letter-box").forEach((box, i) => {
+            box.textContent = selectedWord[i].toUpperCase();
+            box.style.color = "#f87171";
+          });
+        }
+
+        // Disable all keys
+        keyboardEl.querySelectorAll(".key-btn").forEach(btn => btn.disabled = true);
+
+        messageEl.style.display = "block";
+        if (won) {
+          messageEl.classList.add("win");
+          messageEl.textContent = `🎉 You got it! "${selectedWord.toUpperCase()}" — Well played!`;
+        } else {
+          messageEl.classList.add("lose");
+          messageEl.textContent = `💀 Game Over! The word was "${selectedWord.toUpperCase()}". Keep practising!`;
+        }
+
+        newGameBtn.style.display = "inline-block";
+      };
+
+      // Keyboard support — press a key on your physical keyboard!
+      document.addEventListener("keydown", (e) => {
+        const letter = e.key.toLowerCase();
+        if (/^[a-z]$/.test(letter)) handleGuess(letter);
+      });
+
+      newGameBtn.addEventListener("click", startGame);
+
+      // Start!
+      startGame();
+    </script>
+  </body>
+</html>

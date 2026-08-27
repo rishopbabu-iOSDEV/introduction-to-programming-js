@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🛒 Shopping Cart — JavaScript Quest</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>🛒 JS Shop</h1>
+      <div class="cart-icon" id="cartIcon">
+        🛒 <span id="cartBadge">0</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Products Grid -->
+      <section class="products" id="productsGrid"></section>
+
+      <!-- Cart Sidebar -->
+      <aside class="cart-panel" id="cartPanel">
+        <h2>Your Cart</h2>
+        <ul id="cartItems"></ul>
+
+        <div class="promo-area">
+          <input type="text" id="promoInput" placeholder="Promo code (try SAVE10)" />
+          <button id="promoBtn">Apply</button>
+        </div>
+        <p id="promoMsg" class="promo-msg"></p>
+
+        <div class="cart-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span id="subtotalDisplay">₹0</span>
+          </div>
+          <div class="total-row discount-row" id="discountRow" style="display:none">
+            <span>Discount</span>
+            <span id="discountDisplay" class="discount-amount">-₹0</span>
+          </div>
+          <div class="total-row grand-total">
+            <span>Total</span>
+            <span id="totalDisplay">₹0</span>
+          </div>
+        </div>
+
+        <button class="checkout-btn" id="checkoutBtn">Checkout →</button>
+      </aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
