@@ -11,9 +11,11 @@ in five days. No prior programming experience required.
 ## 🚀 Quick Start (Students)
 
 1. **Download or clone** this repository:
+
    ```bash
    git clone https://github.com/rishopbabu-iOSDEV/introduction-to-programming-js.git
    ```
+
 2. Open the folder in **VS Code** and install the **Live Server** extension.
 3. Go to [`starter/`](starter/) and open the first task:
    `starter/block-1-basics/task-1-1-hello-world/`.
@@ -26,7 +28,7 @@ in five days. No prior programming experience required.
 
 ## 📦 Repository Structure
 
-```
+```text
 javascript-quest/
 │
 ├── README.md                  ← You are here
@@ -64,14 +66,16 @@ Every task follows the same rhythm: a few **tasks** to learn a concept, then a
 ## 🗓️ Course at a Glance
 
 | Day | Blocks | Key Concepts |
-|---|---|---|
+| --- | --- | --- |
 | Monday | 1 + 2 | Variables, Data Types, Operators, if/else, switch |
 | Tuesday | 3 + 4 | Loops, Functions, Arrow Functions, Scope |
 | Wednesday | 5 | Arrays, Objects, Array Methods, JSON |
 | Thursday | 6 | DOM, Event Listeners, Dynamic HTML |
 | Friday | 7 | Final Project (student choice) |
 
-**Theory: 15 hrs · Practical: 30 hrs · Total: 45 hrs**
+### Course Hours
+
+Theory: 15 hrs · Practical: 30 hrs · Total: 45 hrs
 
 Full details are in [`weekly-schedule/WEEKLY_SCHEDULE.md`](weekly-schedule/WEEKLY_SCHEDULE.md).
 
@@ -80,6 +84,7 @@ Full details are in [`weekly-schedule/WEEKLY_SCHEDULE.md`](weekly-schedule/WEEKL
 ## 🎯 How to Use This Repo
 
 ### For Students
+
 - Work in [`starter/`](starter/) — follow the `// TODO` steps in each `app.js`.
 - Try the task yourself first. If stuck for more than ~10 minutes, read the
   comments (not the whole solution).
@@ -88,6 +93,7 @@ Full details are in [`weekly-schedule/WEEKLY_SCHEDULE.md`](weekly-schedule/WEEKL
   `solutions/block-7-projects/` for ideas.
 
 ### For Instructors
+
 - Start with [`tutor-handbook/TUTOR_HANDBOOK.md`](tutor-handbook/TUTOR_HANDBOOK.md) —
   a topic-by-topic guide on how to drive each class engagingly, with real-world
   examples and a student-doubts bank. Written for a tutor who knows programming
@@ -103,7 +109,7 @@ Full details are in [`weekly-schedule/WEEKLY_SCHEDULE.md`](weekly-schedule/WEEKL
 ## 🏆 XP Summary
 
 | Block | Tasks | Boss | Max XP |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Block 1 | 200 | 250 | 450 |
 | Block 2 | 200 | 250 | 450 |
 | Block 3 | 175 | 200 | 375 |
@@ -130,4 +136,4 @@ teaching. Attribution appreciated.
 
 ---
 
-*JavaScript Quest · Version 1.0 · One-Week Intensive*
+## JavaScript Quest · Version 1.0 · One-Week Intensive
